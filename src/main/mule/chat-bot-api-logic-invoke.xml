@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="post-cosmos-db-subflow" doc:id="4cddd814-f21f-4d65-9659-6ae9a76c56ab" >
+		<logger level="INFO" doc:name="Logger" doc:id="f8759c8a-67a2-4134-81c7-cdf508cc41d7" message="Start of cosmosDB subflow #[payload]"/>
+		<http:request method="#[Mule::p('https.requestor.system.method')]" doc:name="Cosmos DB API for SQL insert" doc:id="35bdccc1-c621-4365-8d57-7db182de218b" config-ref="HTTP_Request_configuration" path="#[Mule::p('https.requestor.system.path')]">
+            <http:headers><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	"Authorization" : vars.cosmosHeader.authKey,
+	"Accept" : "application/json",
+	"x-ms-version" : "2016-07-11",
+	"x-ms-documentdb-partitionkey" : '["' ++ payload.country ++ '"]',
+	"Content-Type" : "application/json",
+	"x-ms-date" : vars.cosmosHeader.serverDateTime
+}]]]></http:headers>
+        </http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="2a5d9a44-78f7-49f4-8ff8-299b433d54d0" message="End of cosmosDB subflow #[payload]"/>
+	</sub-flow>
+</mule>

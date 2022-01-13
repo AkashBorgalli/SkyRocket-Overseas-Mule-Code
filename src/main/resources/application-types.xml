@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="ssd" format="json">
+      <types:shape format="weave" example="examples/input.json"><![CDATA[%dw 2.0
+
+type ssd = {|
+  clientName: String, 
+  country: String, 
+  intakeYear: String, 
+  degree: String, 
+  course: String, 
+  mobileNumber: String, 
+  emailId: String, 
+  date: String
+|} {"example": "{\\\"clientName\\\":\\\"Akash\\\",\\\"country\\\":\\\"Ireland\\\",\\\"intakeYear\\\":\\\"2021\\\",\\\"degree\\\":\\\"2022\\\",\\\"course\\\":\\\"DatScience\\\",\\\"mobileNumber\\\":\\\"9988768000\\\",\\\"emailId\\\":\\\"akash.borgalli@gmail.com\\\",\\\"date\\\":\\\"27th July 2021\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#1d17aca1-a55a-4ffa-a3ad-2763fd769ec5"/>
+</types:mule>

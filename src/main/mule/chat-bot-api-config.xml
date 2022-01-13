@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:listener-config name="chat-bot-api-httpsListenerConfig">
+        <http:listener-connection host="${https.listener.host}" port="${https.port}" protocol="HTTPS">
+            <tls:context>
+                <tls:key-store type="jks" path="keystore.jks" keyPassword="${secure::keystore.password}" password="${secure::keystore.password}" />
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+   <!--  <api-gateway:autodiscovery apiId="${autodiscovery.apiId}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="fe455691-59b3-4754-9bfa-f7e9f49361fe" flowRef="chat-bot-api-main" /> -->
+    <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="20dc44d2-1085-4a2d-9370-1c4284897893">
+        <http:request-connection protocol="HTTPS" host="#[Mule::p('https.requestor.system.host')]" port="#[Mule::p('https.requestor.system.port')]" />
+    </http:request-config>
+    <email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="f6b87d3f-50d3-4327-87e1-4315024e1e19">
+		<email:smtp-connection host="${email.host}" port="${email.port}" user="${email.address}" password="${secure::email.password}">
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+    
+</email:smtp-config>
+    <configuration-properties doc:name="Configuration properties" doc:id="ca9dceca-e1c7-40b6-a7c3-5f08bdaf48f7" file="properties/app_common.yaml" doc:description="Common Properties"/>
+    <apikit:config name="chat-bot-api-config" api="chat-bot-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties doc:name="Configuration properties" doc:id="967b7599-0cab-459a-b8ff-b4ff8be9f1cd" doc:description="Env Specific properties" file="properties/app_${env}.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="b20ae58b-725f-4d62-878e-6cedcc6c35b9" file="properties/app_secure.yaml" key="${secure.key}" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a2748b57-1f74-4932-ba74-6b46d821a220" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<api-gateway:autodiscovery apiId="${autodiscovery.apiId}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="062954e1-353e-4bce-9e03-a6475c8a7d33" flowRef="chat-bot-api-main" />
+	
+</mule>

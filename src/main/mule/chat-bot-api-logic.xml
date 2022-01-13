@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:azure-storage="http://www.mulesoft.org/schema/mule/azure-storage" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/azure-storage http://www.mulesoft.org/schema/mule/azure-storage/current/mule-azure-storage.xsd http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    
+    <flow name="post:\bot:application\json:chat-bot-api-config">
+        <ee:transform doc:name="payload" doc:id="48431292-52cf-445a-9489-796122cbee54">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	clientName: payload.clientName as String,
+    country: payload.country as String,
+    intakeYear: payload.intakeYear as Number,
+    degree: payload.degree as String,
+    course: payload.course as String,
+    mobileNumber: payload.mobileNumber as Number,
+    emailId: payload.emailId as String,
+    date: payload.date as String,
+    id: vars.correlationId
+}]]></ee:set-payload>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="initialPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+        </ee:transform>
+        <ee:transform doc:name="Set initialPayload" doc:id="1d17aca1-a55a-4ffa-a3ad-2763fd769ec5" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="initialMessage" ><![CDATA[payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="payload" doc:id="f8f924a6-27fe-43b0-a8a3-c29b5e61fb63" message="#[payload]" />
+		<parse-template doc:name="emailBody" doc:id="41c6c095-2a5b-4cea-b160-93c287bc6999" location="otherfiles/emailbody.html"/>
+		<try doc:name="Try" doc:id="500784a6-3c3c-4948-b9b6-89d3b48ae1de" >
+			<email:send doc:name="Send" doc:id="37b3e206-65e2-48f6-9ccc-b6cec55b13bc" config-ref="Email_SMTP" fromAddress="${email.address}" subject="Alert!!">
+			<email:to-addresses>
+				<email:to-address value="#[Mule::p('email.address')]" />
+			</email:to-addresses>
+			<email:body contentType="text/html" encoding="UTF-8">
+			</email:body>
+		</email:send>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6c89fd41-f696-49c6-9f13-14cc9cd960bc" type="ANY">
+					<ee:transform doc:name="errorPayload" doc:id="4b5f2681-d61b-4e93-8ee8-266138ac8ebc" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"error":{
+		"CorrelationId": vars.correlationId,
+		"Type": error.errorType.asString,
+		"Description": error.description,
+		"Date": now() as String {format: "y-MM-dd"},
+		"Time": now() as String {format: "hh:m:s"}
+		
+	}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="errorPayload" doc:id="40a1caf8-1d58-4015-9929-7c58c6911048" message="#[payload]"/>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<set-payload value="#[vars.initialMessage]" doc:name="initialPayload" doc:id="04e1cdbb-5e5d-4c98-ab12-0e1cb6be4805" mimeType="application/json"/>
+		<ee:transform doc:name="Set AuthKey" doc:id="f82d5a4a-796d-4096-8f27-c6769734c04d">
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable variableName="cosmosHeader"><![CDATA[%dw 2.0
+import java!cosmosdb::GenerateCosmosDBAuthToken
+output application/java
+var verb = Mule::p('cosmosDB.verb')
+var resourceType = Mule::p('cosmosDB.resourceType')
+var resourceId = Mule::p('cosmosDB.resourceId')
+var key = Mule::p('secure::cosmosDb.key')
+var keyType = Mule::p('cosmosDB.keyType')
+var tokenVersion = Mule::p('cosmosDB.tokenVersion')		 
+var serverDateTime = GenerateCosmosDBAuthToken::getServerTime() as String
+---
+{
+	serverDateTime: serverDateTime,
+	authKey: GenerateCosmosDBAuthToken::generate(verb, resourceType, resourceId, key, keyType, tokenVersion, serverDateTime)
+}]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="post-userdetails-cosmos-db-subflow" doc:id="2212ecbe-faa6-4045-afb1-e1ed4e8a5aba" name="post-cosmos-db-subflow"/>
+		<ee:transform doc:name="successful msg" doc:id="f762b7ff-baa8-4775-8c4c-4d892228718f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message:"Your message has been recorded! Thanks once again"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="After publish to cosmosDb" doc:id="ed0b8701-6ca3-471b-85ee-af672ab1a214" message="Cosmos document created..#[payload]" />
+    </flow>
+</mule>

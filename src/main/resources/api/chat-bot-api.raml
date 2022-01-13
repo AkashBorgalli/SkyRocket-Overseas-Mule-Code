@@ -1,0 +1,55 @@
+#%RAML 1.0
+title: chat-bot-api
+baseUri: api
+
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        type: string
+      client_secret:
+        type: string
+    responses:
+      401:
+        description: Unauthorized or invalid client application credentials
+      500:
+        description: Bad response from authorization server, or WSDL SOAP Fault error
+
+/bot:
+  displayName: CHAT BOT 
+  description: This API sends user details on email and saves user details in database
+  post:
+    is:
+      - client-id-required
+    body:
+      application/json:
+        type: object
+        properties:
+          country: string
+          intakeYear: string
+          degree: string
+          course: string
+          mobileNumber: string
+          emailId: string
+          date: string  
+        example: {
+          "clientName": "xds",
+          "country": "uuhhv",
+          "intakeYear": "2021",
+          "degree": "2022",
+          "course": "DataScience",
+          "mobileNumber": "1188768000",
+          "emailId": "aka.nhggt@gmail.com",
+          "date": "Tue, 16 Feb 2021"  
+        }
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              message: string
+            example:
+              {
+                message: "Your message has been recorded! Thanks once again"
+              }

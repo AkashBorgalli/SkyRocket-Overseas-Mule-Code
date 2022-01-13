@@ -1,0 +1,18 @@
+# Http listener details
+https:
+  port: "8082"
+  listener:
+    host: "0.0.0.0"
+    connection:
+      timeout: "40000"
+    path: "/api/*"  
+    
+
+  
+cosmosDB:
+  verb: "POST"
+  resourceType: "docs"
+  resourceId: "dbs/Customer/colls/Info"
+  keyType: "master"
+  tokenVersion: "1.0"
+  

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="chat-bot-errorHandlerError_Handler" doc:id="54edc08e-81bb-46e2-ac4c-4e2ed8bd3b3f" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="59790365-fdc6-4752-be98-814740c0f312" type="ANY">
+			<ee:transform doc:name="ErrorMessage" doc:id="e932b31e-7674-4c7b-8d93-97db25683974" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"error":{
+		"CorrelationId": vars.correlationId,
+		"Type": error.errorType.asString,
+		"Description": error.description,
+		"Date": now() as String {format: "y-MM-dd"},
+		"Time": now() as String {format: "hh:m:s"}
+		
+	}
+
+	]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Error Payload" doc:id="064bc027-5f21-4623-93cb-63c332c20716" message="#[payload]"/>
+		</on-error-propagate>
+	</error-handler>
+</mule>
