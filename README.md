@@ -1,7 +1,7 @@
 
 # SkyRocket Overseas Chatbot Project MuleSoft-Code
 
-🚩 ***Problem Statement***: \
+🚩***Problem Statement***: \
 Sky Rocket Overseas Company wants to reduce task & time of the employees where the role of the employees is to be available till the working hours waiting for the Customers to arrive on their online system and once customer is arrived  collect necessary details from the user that are planning to study abroad and also help them with their queries related to their company after which notify the Overseas Consultants for the same as well as feed the customer details in database for future analysis of data.
 
 
@@ -9,6 +9,11 @@ Sky Rocket Overseas Company wants to reduce task & time of the employees where t
 
 ## 📜 Data Description:
 We would receive data from ChatBot in a form of json where we would get Customers Name, Country, Degree, intakeYear, Course, email-id, Date and Mobile Number.
+
+## Architecture Diagram
+
+![](images/Architecture%20Diagram.jpg)
+
 ## 📝 Features
 
 - Convert data in respective datatype.
