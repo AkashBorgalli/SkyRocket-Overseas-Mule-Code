@@ -44,6 +44,7 @@ Steps : 1. Download as zip or clone this repository.\
 4. Click the project folder and Click Finish.\
 5. Go to run option from the top menubar -> run configuration for the particular project -> add env and secure.key variable.\
 6. Right click Run project chatbot-api.
+7. PostMan collection for this api is located at src/test/resources/Chat-Bot API.postman_collection.
 
 
 
