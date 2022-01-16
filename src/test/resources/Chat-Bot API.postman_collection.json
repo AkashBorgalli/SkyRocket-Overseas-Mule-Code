@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "712f3f72-9f0d-49a5-a7ff-787e0d1b922e",
+		"name": "Chat-Bot API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Local Test Url",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "sada",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "xxaA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"clientName\": \"Amit Sonawane\",\r\n  \"country\": \"USA\",\r\n  \"intakeYear\": \"2022\",\r\n  \"degree\": \"Masters\",\r\n  \"course\": \"DataScience\",\r\n  \"mobileNumber\": \"9938098045\",\r\n  \"emailId\": \"amit.sonawane@gmail.com\",\r\n  \"date\": \"Monday,15 November 2021\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://0.0.0.0:8082/api/bot",
+					"protocol": "https",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"bot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CloudHub Url",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "Your Client Id here",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "Your Client Secret here",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"clientName\": \"Karthik\",\r\n  \"country\": \"Canada\",\r\n  \"intakeYear\": \"2024\",\r\n  \"degree\": \"Masters\",\r\n  \"course\": \"Ai&Ml\",\r\n  \"mobileNumber\": \"9087676543\",\r\n  \"emailId\": \"Karthik.kad@gmail.com\",\r\n  \"date\": \"Tue,11 Jan 2022\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://chatbot-app.us-e2.cloudhub.io/api/bot",
+					"protocol": "https",
+					"host": [
+						"chatbot-app",
+						"us-e2",
+						"cloudhub",
+						"io"
+					],
+					"path": [
+						"api",
+						"bot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://worldclockapi.com/api/json/utc/now",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://worldclockapi.com/api/json/utc/now",
+					"protocol": "http",
+					"host": [
+						"worldclockapi",
+						"com"
+					],
+					"path": [
+						"api",
+						"json",
+						"utc",
+						"now"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
